@@ -6,24 +6,22 @@ import {
   StyleSheet,
   Text
 } from 'react-native'
-import { useSelector } from 'react-redux'
 
 import ListItem from '~/components/approved/ListItem'
 import NoItems from '~/components/common/NoItems'
-import { RootState } from '~/data/store'
+import { useTypedSelector } from '~/data/hooks'
 
-export default function Approved() {
-  const approvedItems = useSelector(
-    (state: RootState) => state.approvedItems
-  )
+const Approved = () => {
+  const approvedItems = useTypedSelector(state => state.approvedItems)
   return (
     <SafeAreaView style={styles.container}>
       <FlatList
         data={approvedItems}
-        renderItem={({ item, index }) => <ListItem item={item} />}
+        renderItem={({ item }) => <ListItem item={item} />}
         ListHeaderComponent={() => (
-          <Text style={styles.header}>Your stuff</Text>
+          <Text style={styles.header}>My stuff</Text>
         )}
+        contentContainerStyle={{ flex: 1 }}
         ListEmptyComponent={() => (
           <NoItems text="Nothing approved yet, check out the pending items 🤙" />
         )}
@@ -40,10 +38,12 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    marginTop: StatusBar.currentHeight || 0,
+    marginTop: StatusBar.currentHeight ?? 0,
     backgroundColor: '#eee'
   },
   list: {
     paddingTop: 12
   }
 })
+
+export default Approved

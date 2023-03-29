@@ -40,6 +40,7 @@ export const store = configureStore({
 
 export const persistor = persistStore(store)
 
+// Uncomment to reset data :-)
 // persistor.purge()
 
 // Configure listeners using the provided defaults
@@ -47,6 +48,4 @@ setupListeners(store.dispatch)
 
 // Infer the `RootState` and `AppDispatch` types from the store itself
 export type RootState = ReturnType<typeof store.getState>
-
-// Inferred type: {tree: TreeState}
 export type AppDispatch = typeof store.dispatch

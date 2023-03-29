@@ -6,15 +6,15 @@ import {
   Text,
   View
 } from 'react-native'
-import { useDispatch, useSelector } from 'react-redux'
 
+import { useTypedDispatch, useTypedSelector } from '~/data/hooks'
 import { approveItems } from '~/data/local/items'
-import { RootState } from '~/data/store'
+import commonStyles from '~/styles/common'
 
 const Approve = () => {
   const router = useRouter()
-  const dispatch = useDispatch()
-  const selectedItems = useSelector((state: RootState) =>
+  const dispatch = useTypedDispatch()
+  const selectedItems = useTypedSelector(state =>
     state.pendingItems.filter(item => item.isSelected)
   )
   const isDisabled = selectedItems.length === 0
@@ -27,18 +27,21 @@ const Approve = () => {
           dispatch(approveItems(selectedItems))
           Alert.alert('Items approved!', '', [
             {
-              text: 'See my stuff',
-              onPress: () => router.push('/approved'),
-              style: 'cancel'
+              text: 'OK'
             },
             {
-              text: 'OK'
+              text: 'See my stuff',
+              onPress: () => router.push('/approved')
             }
           ])
         }}
       >
         <Text
-          style={isDisabled ? styles.textDisabled : styles.textActive}
+          style={
+            isDisabled
+              ? commonStyles.textDisabled
+              : commonStyles.textActive
+          }
         >
           Approve
         </Text>
@@ -50,12 +53,6 @@ const Approve = () => {
 const styles = StyleSheet.create({
   container: {
     paddingRight: 16
-  },
-  textActive: {
-    color: 'black'
-  },
-  textDisabled: {
-    color: 'lightgray'
   }
 })
 

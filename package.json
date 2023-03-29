@@ -10,7 +10,7 @@
     "prettify": "prettier --write ."
   },
   "dependencies": {
-    "@react-native-async-storage/async-storage": "^1.18.0",
+    "@react-native-async-storage/async-storage": "1.17.11",
     "@reduxjs/toolkit": "^1.9.3",
     "expo": "~48.0.9",
     "expo-constants": "~14.2.1",
@@ -32,7 +32,7 @@
     "@trivago/prettier-plugin-sort-imports": "^4.1.1",
     "@types/react": "~18.0.14",
     "prettier": "2.8.7",
-    "typescript": "^4.9.4"
+    "typescript": "^4.9.5"
   },
   "overrides": {
     "metro": "0.76.0",

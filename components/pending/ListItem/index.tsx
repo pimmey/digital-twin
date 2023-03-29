@@ -1,5 +1,6 @@
 import { MaterialIcons } from '@expo/vector-icons'
 import { Image } from 'expo-image'
+import { useRef } from 'react'
 import {
   Dimensions,
   Pressable,
@@ -9,7 +10,8 @@ import {
 } from 'react-native'
 import {
   PanGestureHandler,
-  PanGestureHandlerGestureEvent
+  PanGestureHandlerGestureEvent,
+  TapGestureHandler
 } from 'react-native-gesture-handler'
 import Animated, {
   runOnJS,
@@ -24,9 +26,11 @@ import { IMAGE_MAP } from '~/utils/image-map'
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window')
 const TRANSLATE_X_THRESHOLD = -SCREEN_WIDTH * 0.5
-const ITEM_HEIGHT = 80
+const ITEM_SIZE = 80
 const ITEM_VERTICAL_MARGIN = 4
 const DISCARD_BUTTON_WIDTH = 100
+const MARGIN = 8
+const DISCARD_BUTTON_WITH_MARGIN = DISCARD_BUTTON_WIDTH + MARGIN
 
 type ListItemProps = {
   item: Item
@@ -36,7 +40,7 @@ type ListItemProps = {
 
 const ListItem = ({ item, onDismiss, onSelect }: ListItemProps) => {
   const translateX = useSharedValue(0)
-  const itemHeight = useSharedValue(ITEM_HEIGHT)
+  const itemHeight = useSharedValue(ITEM_SIZE)
   const opacity = useSharedValue(1)
   const marginVertical = useSharedValue(ITEM_VERTICAL_MARGIN)
   const offset = useSharedValue(0)
@@ -70,7 +74,7 @@ const ListItem = ({ item, onDismiss, onSelect }: ListItemProps) => {
         switch (true) {
           case shouldSnap:
             translateX.value = withTiming(
-              -(DISCARD_BUTTON_WIDTH + 8),
+              -DISCARD_BUTTON_WITH_MARGIN,
               undefined,
               isFinished => {
                 if (isFinished) {
@@ -78,7 +82,7 @@ const ListItem = ({ item, onDismiss, onSelect }: ListItemProps) => {
                 }
               }
             )
-            offset.value = -(DISCARD_BUTTON_WIDTH + 8)
+            offset.value = -DISCARD_BUTTON_WITH_MARGIN
             break
           case shouldBeDismissed:
             runOnJS(dismiss)()
@@ -100,9 +104,9 @@ const ListItem = ({ item, onDismiss, onSelect }: ListItemProps) => {
 
   const animatedIconContainerStyle = useAnimatedStyle(() => {
     const width =
-      translateX.value + 8 > -(SCREEN_WIDTH - 16)
-        ? -(translateX.value + 8)
-        : -(SCREEN_WIDTH + 16)
+      translateX.value + MARGIN > -(SCREEN_WIDTH - MARGIN * 2)
+        ? -(translateX.value + MARGIN)
+        : -(SCREEN_WIDTH + MARGIN * 2)
     return { width, height: itemHeight.value, zIndex: zIndex.value }
   })
 
@@ -117,50 +121,50 @@ const ListItem = ({ item, onDismiss, onSelect }: ListItemProps) => {
     marginVertical: marginVertical.value
   }))
 
+  const panRef = useRef(null)
+
   return (
     <>
-      <Pressable onPress={onSelect}>
-        <Animated.View
-          style={[styles.root, animatedOuterContainerStyle]}
-        >
-          <PanGestureHandler
-            onGestureEvent={panGesture}
-            activeOffsetX={[-5, 5]}
-          >
-            <Animated.View
-              style={[
-                styles.outerContainer,
-                animatedItemContainerStyle
-              ]}
+      <Animated.View
+        style={[styles.root, animatedOuterContainerStyle]}
+      >
+        <PanGestureHandler onGestureEvent={panGesture} ref={panRef}>
+          <Animated.View>
+            <TapGestureHandler
+              onActivated={onSelect}
+              waitFor={panRef}
             >
-              {item.isSelected ? (
+              <Animated.View
+                style={[
+                  styles.outerContainer,
+                  animatedItemContainerStyle
+                ]}
+              >
                 <MaterialIcons
-                  name="radio-button-checked"
+                  name={
+                    item.isSelected
+                      ? 'radio-button-checked'
+                      : 'radio-button-unchecked'
+                  }
                   size={24}
                   color="black"
                 />
-              ) : (
-                <MaterialIcons
-                  name="radio-button-unchecked"
-                  size={24}
-                  color="black"
-                />
-              )}
-              <View style={styles.innerContainer}>
-                <View style={styles.imageContainer}>
-                  <Image
-                    source={IMAGE_MAP[item.id]}
-                    style={styles.image}
-                  />
+                <View style={styles.innerContainer}>
+                  <View style={styles.imageContainer}>
+                    <Image
+                      source={IMAGE_MAP[item.id]}
+                      style={styles.image}
+                    />
+                  </View>
+                  <View style={styles.textContainer}>
+                    <Text>{item.name}</Text>
+                  </View>
                 </View>
-                <View style={styles.textContainer}>
-                  <Text>{item.name}</Text>
-                </View>
-              </View>
-            </Animated.View>
-          </PanGestureHandler>
-        </Animated.View>
-      </Pressable>
+              </Animated.View>
+            </TapGestureHandler>
+          </Animated.View>
+        </PanGestureHandler>
+      </Animated.View>
       <Animated.View
         style={[
           styles.deleteIconContainer,
@@ -189,7 +193,7 @@ const ListItem = ({ item, onDismiss, onSelect }: ListItemProps) => {
 
 const styles = StyleSheet.create({
   root: {
-    height: ITEM_HEIGHT,
+    height: ITEM_SIZE,
     marginVertical: ITEM_VERTICAL_MARGIN,
     opacity: 1
   },
@@ -210,8 +214,8 @@ const styles = StyleSheet.create({
   },
   imageContainer: {},
   image: {
-    width: ITEM_HEIGHT,
-    height: ITEM_HEIGHT
+    width: ITEM_SIZE,
+    height: ITEM_SIZE
   },
   textContainer: { flexShrink: 1 },
   deleteIconContainer: {
@@ -223,7 +227,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: DISCARD_BUTTON_WIDTH,
     minWidth: DISCARD_BUTTON_WIDTH,
-    height: ITEM_HEIGHT,
+    height: ITEM_SIZE,
     paddingHorizontal: 8,
     backgroundColor: 'tomato',
     borderRadius: 16

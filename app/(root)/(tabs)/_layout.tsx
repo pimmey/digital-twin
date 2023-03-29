@@ -4,7 +4,7 @@ import { Tabs } from 'expo-router'
 import Approve from '~/components/pending/Approve'
 import SelectAll from '~/components/pending/SelectAll'
 
-export default function Layout() {
+const TabsLayout = () => {
   return (
     <Tabs screenOptions={{ tabBarActiveTintColor: 'black' }}>
       <Tabs.Screen
@@ -39,3 +39,5 @@ export default function Layout() {
     </Tabs>
   )
 }
+
+export default TabsLayout

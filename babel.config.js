@@ -10,9 +10,10 @@ module.exports = function (api) {
         'module-resolver',
         {
           alias: {
-            '~/components': './components',
             '~/assets': './assets',
+            '~/components': './components',
             '~/data': './data',
+            '~/styles': './styles',
             '~/utils': './utils'
           }
         }

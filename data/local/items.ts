@@ -19,12 +19,14 @@ export interface State {
   pendingItems: Item[]
   approvedItems: Item[]
   areAllItemsSelected: boolean
+  pickedItemForModal: Item | null
 }
 
 const initialState: State = {
   pendingItems: mockData,
   approvedItems: [],
-  areAllItemsSelected: false
+  areAllItemsSelected: false,
+  pickedItemForModal: null
 }
 
 export const itemsSlice = createSlice({
@@ -48,7 +50,8 @@ export const itemsSlice = createSlice({
       state.areAllItemsSelected = false
     },
     discardItem: (state, action: PayloadAction<number>) => {
-      state.pendingItems.splice(action.payload, 1)
+      const index = action.payload
+      state.pendingItems.splice(index, 1)
     },
     approveItems: (state, action: PayloadAction<Item[]>) => {
       const items = action.payload
@@ -59,6 +62,9 @@ export const itemsSlice = createSlice({
         )
         state.pendingItems.splice(index, 1)
       })
+    },
+    pickItemForModal: (state, action: PayloadAction<Item>) => {
+      state.pickedItemForModal = action.payload
     }
   }
 })
@@ -68,7 +74,8 @@ export const {
   selectAllItems,
   deselectAllItems,
   discardItem,
-  approveItems
+  approveItems,
+  pickItemForModal
 } = itemsSlice.actions
 
 export default itemsSlice.reducer

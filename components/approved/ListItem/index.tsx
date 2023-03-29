@@ -1,21 +1,26 @@
 import { MaterialIcons } from '@expo/vector-icons'
 import { Image } from 'expo-image'
+import { useRouter } from 'expo-router'
 import { Pressable, StyleSheet, Text, View } from 'react-native'
 
-import { Item } from '~/data/local/items'
+import { useTypedDispatch } from '~/data/hooks'
+import { Item, pickItemForModal } from '~/data/local/items'
 import { IMAGE_MAP } from '~/utils/image-map'
-
-const ITEM_HEIGHT = 80
-const ITEM_VERTICAL_MARGIN = 4
-const DISCARD_BUTTON_WIDTH = 100
 
 type ListItemProps = {
   item: Item
 }
 
 const ListItem = ({ item }: ListItemProps) => {
+  const router = useRouter()
+  const dispatch = useTypedDispatch()
   return (
-    <Pressable onPress={() => {}}>
+    <Pressable
+      onPress={() => {
+        dispatch(pickItemForModal(item))
+        router.push('/modal')
+      }}
+    >
       <View style={styles.root}>
         <View style={styles.outerContainer}>
           <View style={styles.innerContainer}>
@@ -26,7 +31,8 @@ const ListItem = ({ item }: ListItemProps) => {
               />
             </View>
             <View style={styles.textContainer}>
-              <Text>{item.name}</Text>
+              <Text style={styles.name}>{item.name}</Text>
+              <Text style={styles.brand}>{item.brand}</Text>
             </View>
           </View>
           <View>
@@ -42,10 +48,12 @@ const ListItem = ({ item }: ListItemProps) => {
   )
 }
 
+const ITEM_SIZE = 80
+
 const styles = StyleSheet.create({
   root: {
-    height: ITEM_HEIGHT,
-    marginVertical: ITEM_VERTICAL_MARGIN,
+    height: ITEM_SIZE,
+    marginVertical: 4,
     opacity: 1
   },
   outerContainer: {
@@ -63,11 +71,18 @@ const styles = StyleSheet.create({
   },
   imageContainer: {},
   image: {
-    width: ITEM_HEIGHT,
-    height: ITEM_HEIGHT,
+    width: ITEM_SIZE,
+    height: ITEM_SIZE,
     borderRadius: 8
   },
-  textContainer: { flexShrink: 1 }
+  textContainer: { flexShrink: 1 },
+  name: {
+    marginBottom: 4,
+    fontWeight: '500'
+  },
+  brand: {
+    textTransform: 'uppercase'
+  }
 })
 
 export default ListItem
