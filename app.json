@@ -1,5 +1,6 @@
 {
   "expo": {
+    "scheme": "digital-twin",
     "name": "digital-twin",
     "slug": "digital-twin",
     "version": "1.0.0",
