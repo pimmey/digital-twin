@@ -15,7 +15,7 @@ export type Item = {
   isApproved?: boolean
 }
 
-export interface State {
+export type State = {
   pendingItems: Item[]
   approvedItems: Item[]
   areAllItemsSelected: boolean

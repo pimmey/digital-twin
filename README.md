@@ -1,5 +1,10 @@
 # Digital twin app 👖
-This project is scaffolded with [Expo](https://docs.expo.dev/get-started/installation/).
+This project is scaffolded with [Expo SDK 48](https://docs.expo.dev/get-started/installation/).
+
+## Requirements
+- Expo SDK 46+
+- Node.js 16+
+- npm 8.3.0+
 
 ## Firing it up 
 ```bash
